@@ -1,0 +1,87 @@
+.login {
+  height: 100vh;
+  background-color: #f7f7f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &-content {
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 50px;
+    border-radius: 20px;
+    &-left {
+      display: flex;
+      align-items: center;
+      img {
+        max-width: 200px;
+        object-fit: cover;
+        height: 200px;
+        display: block;
+        border-radius: 50%;
+      }
+    }
+    &-right {
+      text-align: center;
+      h3 {
+        color: #6356e5;
+        margin-bottom: 30px;
+      }
+      form {
+        .input-box {
+          position: relative;
+          .pass-action {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 10px;
+            color: #6356e5;
+            cursor: pointer;
+          }
+          label {
+            color: #6356e5;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding-left: 20px;
+          }
+          input {
+            border: none;
+            outline: none;
+            border-radius: 50px;
+            height: 40px;
+            width: 100%;
+            padding: 0 50px;
+            color: #777;
+          }
+        }
+        .login-btn {
+          height: 40px;
+          padding: 0 100px;
+          border-radius: 40px;
+          background-color: #6356e5;
+          color: white;
+          margin-top: 20px;
+          letter-spacing: 1px;
+          &:disabled {
+            background-color: rgba($color: #6356e5, $alpha: 0.7);
+            cursor: not-allowed;
+          }
+        }
+        a {
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .login {
+    padding: 0 20px;
+    &-content {
+      padding: 50px 20px;
+    }
+  }
+}
