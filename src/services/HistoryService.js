@@ -9,4 +9,8 @@ export const HistoryService = {
     const { data } = await axiosInstance.put(`/history/${id}`, formdata);
     return data;
   },
+  async deleteHistory(id) {
+    const { data } = await axiosInstance.delete(`/history/${id}`);
+    return data;
+  },
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, Form, InputNumber, Progress, Skeleton, Space, Table, message, notification } from "antd";
+import { Button, Divider, Form, InputNumber, Popconfirm, Progress, Skeleton, Space, Table, message, notification } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeUserFailure,
@@ -9,6 +9,8 @@ import {
 import { UserService } from "../../services/UserService";
 import { useParams } from "react-router-dom";
 import { HistoryService } from "../../services/HistoryService";
+import moment from "moment";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const HistoryBox = () => {
   const [form] = Form.useForm();
@@ -27,7 +29,7 @@ const HistoryBox = () => {
       dispatch(changeUserStart());
       try {
         const data = await UserService.getOneUser(id);
-        tempData = data.history;
+        tempData = data.history.map(item => ({ ...item, examMoment: moment(item.createdAt).format('lll') }));
         dispatch(changeUserSuccess());
       } catch (error) {
         message.error(error.response.data.message);
@@ -38,6 +40,15 @@ const HistoryBox = () => {
     }
     setHistory(tempData?.map((item, index) => ({ ...item, key: index + 1 })));
   };
+
+  const handleDeleteHistory = async (id) => {
+    try {
+      await HistoryService.deleteHistory(id);
+      setIsHistoryChange(!isHistoryChange);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     getOneUser();
@@ -71,11 +82,11 @@ const HistoryBox = () => {
       dataIndex: "title",
     },
     { key: "quizCount", title: "Savollar soni", dataIndex: "countQuiz" },
-    { key: "date", title: "Sana", dataIndex: "examMoment" },
+    { key: "date", title: "Sana", width: 200, dataIndex: "examMoment" },
     { key: "result", title: "Yechildi", dataIndex: "correctCount" },
     {
       key: "percent",
-      title: "Test(%)",
+      title: "Test",
       render: (his) => {
         return `${Math.round((his.correctCount / his.countQuiz) * 100)}%`;
       },
@@ -83,7 +94,7 @@ const HistoryBox = () => {
     {
       key: "practice",
       width: "180px",
-      title: "Amaliyot(%)",
+      title: "Amaliyot",
       render: (his) => {
         if (his.type === "exam") {
           if (currentUser.role !== "student") return <div>
@@ -121,9 +132,10 @@ const HistoryBox = () => {
       render: (his) => {
         let result = (his.correctCount / his.countQuiz) * 100;
         if (his.type === "exam") {
-          if (his.practice) result = (result + his.practice) / 2;
+          if (his.practice) result = (result + 1 * his.practice) / 2;
           else result = result / 2;
         }
+        console.log(result)
         return Math.round(result) >= 60 ? (
           <span className="text-success">passed</span>
         ) : (
@@ -134,6 +146,12 @@ const HistoryBox = () => {
       fixed: "right",
     },
   ];
+
+  if (currentUser.role === 'admin') columns.push({
+    key: 'action', title: "O'chirish", render: (his) => <Popconfirm title="Ishonchingiz komilmi?" okText="ha" cancelText="yo'q" onConfirm={() => handleDeleteHistory(his._id)}>
+      <Button icon={<DeleteOutlined />}></Button>
+    </Popconfirm>
+  })
 
   return (
     <div className="history-box pt-3">
