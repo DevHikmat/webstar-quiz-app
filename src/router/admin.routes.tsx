@@ -5,12 +5,14 @@ import Categories from "../pages/admin/Categories"
 import { RouteObject } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout";
 import Exams from "../pages/admin/Exams";
+import StudentDetail from "@/pages/admin/students/StudentDetail";
 
 export const adminRoutes: RouteObject = {
   path: '/admin',
   element: <AdminLayout />, 
   children: [
     { index: true, path: "students/*", element: <Students /> },
+    { path: "students/:id", element: <StudentDetail /> },
     { path: 'teachers', element: <Teachers /> },
     { path: 'groups', element: <Groups /> },
     { path: 'exams', element: <Exams /> },

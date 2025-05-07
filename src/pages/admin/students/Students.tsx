@@ -8,6 +8,8 @@ import { usePagination } from "@/hooks/usePagination";
 import { StudentsColumns } from "./StudentsColumns";
 import { getAllGroup } from "@/services/groupService";
 import { getChangedFields } from "@/utils/getChangedFields";
+import { useUpdateMutation } from "@/hooks/useUpdateMutation";
+import { ColumnsType } from "antd/es/table";
 
 const Students = () => {
   const { page: currentPage } = usePagination();
@@ -40,16 +42,13 @@ const Students = () => {
     },
   });
   
-  const updateUserMutation = useMutation({
-    mutationFn: (updatedData: Partial<User>) => updateUser(updatingUser?._id!, updatedData),
+  const updateUserMutation = useUpdateMutation<User>(updatingUser?._id, {
+    entityName: "Foydalanuvchi",
+    mutationFn: updateUser,
     onSuccess: () => {
-      message.success("Foydalanuvchi muvaffaqiyatli yangilandi.");
       refetch();
       handleCloseModal();
     },
-    onError: (error) => {
-      message.error("O‘zgartirishda xatolik: " + (error as Error).message);
-    }
   });
  
   const handleSaveUser = () => {
@@ -64,7 +63,7 @@ const Students = () => {
     updForm.resetFields();
   };
 
-  const columns = StudentsColumns(handleOpenModal, deleteMutation, currentPage, groupList?.groups);
+  const columns:ColumnsType<User> = StudentsColumns(handleOpenModal, deleteMutation, refetch, currentPage, groupList?.groups);
 
   return (
     <div>
@@ -95,6 +94,7 @@ const Students = () => {
           </Flex>
         </Form>
       </Modal>
+      <Divider>All Students in Webstar</Divider>
       <CommonTable currentPage={currentPage} totalPage={data?.totalPage} dataSource={data?.users || []} columns={columns} loading={isLoading} />
     </div>
   );
