@@ -61,7 +61,7 @@ export interface History {
   countQuiz: number;
   correctCount: number;
   userId: string;
-  practice: string | number;
+  practice: string;
   createdAt: string;
   updatedAt: string;
 }

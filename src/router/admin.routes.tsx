@@ -5,7 +5,7 @@ import Categories from "../pages/admin/Categories"
 import { RouteObject } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout";
 import Exams from "../pages/admin/Exams";
-import StudentDetail from "@/pages/admin/students/StudentDetail";
+import StudentDetail from "@/pages/admin/studentDetail/StudentDetail";
 
 export const adminRoutes: RouteObject = {
   path: '/admin',

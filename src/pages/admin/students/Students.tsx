@@ -63,7 +63,7 @@ const Students = () => {
     updForm.resetFields();
   };
 
-  const columns:ColumnsType<User> = StudentsColumns(handleOpenModal, deleteMutation, refetch, currentPage, groupList?.groups);
+  const columns:ColumnsType<User> = StudentsColumns(handleOpenModal, deleteMutation, refetch, currentPage, groupList);
 
   return (
     <div>
@@ -75,7 +75,7 @@ const Students = () => {
           </Form.Item>
           <Form.Item label="Boshqa guruhga o'tkazish" name='group'>
             <Select>
-              {groupList?.groups.map((item) => {
+              {groupList?.map((item) => {
                 return (
                   <Select.Option value={item._id} key={item._id}>
                     {item.name}

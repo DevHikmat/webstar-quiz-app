@@ -16,14 +16,14 @@ interface SignUpFormData {
 
 const Signup = () => {
   const queryClient = useQueryClient();
-  const {mutate: signupUser, isPending} = useMutation({
+  const {mutate: signupUser} = useMutation({
     mutationFn: signup,
     onSuccess: ({ user, token }) => {
       localStorage.setItem('token', token);
       queryClient.setQueryData(['me'], user); 
     },
   });
-  const { data, isLoading, isError, error } = useQuery({
+  const { data:groupList, isLoading, isError, error } = useQuery({
     queryKey: ['groups'],
     queryFn: () => getAllGroup(),
   })
@@ -71,7 +71,7 @@ const Signup = () => {
             </Form.Item>
             <Form.Item name="group" initialValue={""}>
               <Select>
-                {data?.groups.map((item) => {
+                {groupList?.map((item) => {
                   return (
                     <Select.Option value={item._id} key={Math.random()}>
                       {item.name}

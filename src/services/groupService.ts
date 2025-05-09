@@ -6,9 +6,9 @@ export const createGroup = async (formdata: GroupFormData):Promise<any> => {
   return res.data;
 }
 
-export const getAllGroup = async ():Promise<{groups: Group[], message: string}> => {
+export const getAllGroup = async ():Promise<Group[]> => {
   const res = await api.get(`/group`);
-  return res.data;
+  return res.data.groups;
 }
 
 export const getTeacherGroup = async (teacherId:string):Promise<Group[]> => {
