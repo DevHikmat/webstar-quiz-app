@@ -1,5 +1,5 @@
 import Students from "../pages/admin/students/Students"
-import Teachers from "../pages/admin/Teachers"
+import Teachers from "../pages/admin/Teachers/Teachers"
 import Groups from "../pages/admin/Groups"
 import Categories from "../pages/admin/Categories"
 import { RouteObject } from "react-router-dom";
