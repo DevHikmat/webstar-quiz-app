@@ -1,43 +1,65 @@
 import { deleteUser, getTeachers } from "@/services/userService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import TeacherCard from "./TeacherCard";
+import TeacherCard from "@/pages/admin/teachers/TeacherCard";
 import {
   Button,
+  Flex,
   Form,
   Input,
   message,
   Modal,
   Row,
   Upload,
-  UploadProps,
+  UploadFile,
 } from "antd";
-import { CircleAlert, DeleteIcon, HomeIcon, Inbox, Plus } from "lucide-react";
+import { CircleAlert, Inbox, Plus } from "lucide-react";
 import { useState } from "react";
+import { UserRole } from "@/types/enum.type";
+import { signup } from "@/services/authService";
 
 const { Dragger } = Upload;
 
-const props: UploadProps = {
-  name: "file",
-  multiple: true,
-  onChange(info) {
-    console.log(info);
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
-
 const Teachers = () => {
-  const [open, setOpen] = useState(false);
-  const {
-    data: teachers,
-    isPending,
-    isError,
-  } = useQuery({
+  const [teacherImg, setTeacherImg] = useState<UploadFile | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [tempId, setTempId] = useState<string | null>(null);
+  const [addForm] = Form.useForm();
+  const { data: teachers, isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeachers,
   });
   const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: signup,
+    onSuccess: (data) => {
+      console.log(data);
+      setTeacherImg(null);
+      addForm.resetFields();
+      handleCancel();
+      message.success("O‘qituvchi muvaffaqiyatli yaratildi");
+      queryClient.invalidateQueries({ queryKey: ["teachers"] });
+    },
+    onError: (error: any) => {
+      message.error(
+        error?.response?.data?.message || "Yaratishda xatolik yuz berdi"
+      );
+    },
+  });
+
+  const props = {
+    name: "file",
+    multiple: false,
+    accept: "image/*",
+    beforeUpload: (file: UploadFile) => {
+      setTeacherImg(file);
+      return false;
+    },
+    onRemove: () => {
+      setTeacherImg(null);
+    },
+    fileList: teacherImg ? [teacherImg] : [],
+  };
 
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
@@ -66,7 +88,6 @@ const Teachers = () => {
       },
     });
   };
-
   const onDelete = (id: string) => {
     showDeleteConfirm(() => {
       deleteMutation.mutate(id);
@@ -80,6 +101,27 @@ const Teachers = () => {
     setOpen(false);
   };
 
+  const handleAdd = async () => {
+    try {
+      const values = await addForm.validateFields();
+      const { subject, firstname, lastname, email, password } = values;
+      const formData = new FormData();
+      formData.append("subject", subject);
+      formData.append("firstname", firstname);
+      formData.append("lastname", lastname);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("role", UserRole.TEACHER);
+      if (teacherImg instanceof File) {
+        console.log(teacherImg);
+        formData.append("profilePicture", teacherImg);
+      }
+      createMutation.mutate(formData);
+    } catch (error) {
+      message.error("Iltimos, barcha maydonlarni to‘g‘ri to‘ldiring");
+    }
+  };
+
   if (!teachers?.length) return;
   if (isPending) return message.info("Loading....");
   return (
@@ -89,36 +131,54 @@ const Teachers = () => {
         icon={<Plus />}
         style={{ marginBottom: "20px" }}
       >
-        Add new Teacher
+        Yangi ustoz qo'shish
       </Button>
-      <Modal open={open} title="Add teacher info" onCancel={handleCancel}>
-        <Form>
+      <Modal
+        footer={false}
+        open={open}
+        title="Ustoz ma'lumotlarini kiriting."
+        onCancel={handleCancel}
+      >
+        <Form form={addForm} labelCol={{ span: 6 }} labelAlign="left">
           <Form.Item>
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
                 <Inbox />
               </p>
               <p className="ant-upload-text">
-                Click or drag file to this area to upload
+                Rasmni yuklash uchun bosing yoki surib keling.
               </p>
               <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibited from
-                uploading company data or other banned files.
+                Yagona yuklashni qo'llab-quvvatlash.
               </p>
             </Dragger>
           </Form.Item>
-          <Form.Item>
-            <Input placeholder="firstname" />
+          <Form.Item name="subject" label="Mutaxasis">
+            <Input placeholder="Fan nomi" />
           </Form.Item>
-          <Form.Item>
-            <Input placeholder="lastname" />
+          <Form.Item name="firstname" label="Ustoz ismi">
+            <Input placeholder="ism" />
           </Form.Item>
-          <Form.Item>
+          <Form.Item name="lastname" label="Familya">
+            <Input placeholder="familya" />
+          </Form.Item>
+          <Form.Item name="email" label="Elektron manzil">
             <Input placeholder="email" />
           </Form.Item>
-          <Form.Item>
-            <Input placeholder="password" />
+          <Form.Item name="password" label="Parol">
+            <Input placeholder="parol" />
           </Form.Item>
+          <Flex gap={10} justify="end">
+            <Button onClick={() => setOpen(false)}>Bekor qilish</Button>
+            <Button
+              loading={createMutation.isPending}
+              disabled={createMutation.isPending}
+              onClick={handleAdd}
+              type="primary"
+            >
+              Saqlash
+            </Button>
+          </Flex>
         </Form>
       </Modal>
       <Row gutter={[16, 16]}>

@@ -6,15 +6,21 @@ interface LoginResponse {
   token: string;
 }
 
-export const login = async (formdata: LoginFormData):Promise<LoginResponse> => {
+export const login = async (
+  formdata: LoginFormData
+): Promise<LoginResponse> => {
   const res = await api.post(`/auth/login`, formdata);
   return res.data;
 };
-export const signup = async (formdata: SignupFormData):Promise<any> => {
-  const res = await api.post(`/auth/signup`, formdata);
+export const signup = async (formdata: FormData): Promise<any> => {
+  const res = await api.post(`/auth/signup`, formdata, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 export const getMe = async (): Promise<any> => {
-  const res = await api.post(`/user/me`); 
+  const res = await api.post(`/user/me`);
   return res.data;
 };

@@ -5,12 +5,14 @@ export interface LoginFormData {
   password: string;
 }
 export interface SignupFormData {
+  subject?: string;
   firstname: string;
   lastname: string;
   email: string;
   password: string;
   role: UserRole;
-  group: string;
+  group?: string;
+  profilePicture?: FileList | null;
 }
 export interface GroupFormData {
   name: string;
