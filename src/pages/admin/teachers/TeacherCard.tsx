@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Avatar, Button, Space, Typography, Col } from "antd";
+import { Card, Avatar, Button, Typography, Col } from "antd";
 import { Edit, Trash2 } from "lucide-react";
 import { User } from "@/types/index.type";
 
@@ -29,7 +29,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({
   return (
     <Col span={6}>
       <Card
-        style={{ width: 300 }}
+        style={{ width: "100%" }}
         cover={
           <Avatar
             src={profilePicture?.url || undefined}

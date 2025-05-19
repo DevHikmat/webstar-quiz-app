@@ -1,29 +1,29 @@
-import { deleteUser, getTeachers } from "@/services/userService";
+import { deleteUser, getTeachers, updateUser } from "@/services/userService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import TeacherCard from "@/pages/admin/teachers/TeacherCard";
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Upload,
-  UploadFile,
-} from "antd";
+import { Button, Flex, Form, Input, message, Modal, Row, Select, Spin, Upload, UploadFile } from "antd";
 import { CircleAlert, Inbox, Plus } from "lucide-react";
 import { useState } from "react";
 import { UserRole } from "@/types/enum.type";
 import { signup } from "@/services/authService";
+import { subjects } from "@/utils/subjects";
+import { getChangedFields } from "@/utils/getChangedFields";
+import { User } from "@/types/index.type";
 
 const { Dragger } = Upload;
+interface UpdateTeacherValue {
+  _id: string;
+  subject: string;
+  password: string | undefined;
+}
 
 const Teachers = () => {
   const [teacherImg, setTeacherImg] = useState<UploadFile | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [tempId, setTempId] = useState<string | null>(null);
   const [addForm] = Form.useForm();
+  const [editForm] = Form.useForm();
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [updTeacherValues, setUpdTeacherValues] = useState<null | UpdateTeacherValue>(null);
   const { data: teachers, isPending } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeachers,
@@ -41,9 +41,31 @@ const Teachers = () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
     },
     onError: (error: any) => {
-      message.error(
-        error?.response?.data?.message || "Yaratishda xatolik yuz berdi"
-      );
+      message.error(error?.response?.data?.message || "Yaratishda xatolik yuz berdi");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      message.success("O‘qituvchi muvaffaqiyatli o‘chirildi");
+      queryClient.invalidateQueries({ queryKey: ["teachers"] }); // ro‘yxatni yangilash
+    },
+    onError: () => {
+      message.error("O‘chirishda xatolik yuz berdi");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: Partial<User> }) => updateUser(id, formData),
+    onSuccess: () => {
+      message.success("O‘qituvchi ma'lumotlari yangilandi");
+      queryClient.invalidateQueries({ queryKey: ["teachers"] }); // ro'yxatni yangilash
+      setEditModalOpen(false);
+      editForm.resetFields();
+    },
+    onError: (error: any) => {
+      message.error(error?.response?.data?.message || "Yangilashda xatolik yuz berdi");
     },
   });
 
@@ -61,21 +83,15 @@ const Teachers = () => {
     fileList: teacherImg ? [teacherImg] : [],
   };
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteUser,
-    onSuccess: () => {
-      message.success("O‘qituvchi muvaffaqiyatli o‘chirildi");
-      queryClient.invalidateQueries({ queryKey: ["teachers"] }); // ro‘yxatni yangilash
-    },
-    onError: () => {
-      message.error("O‘chirishda xatolik yuz berdi");
-    },
-  });
-
-  const onEdit = (id: string) => {
-    console.log(id);
+  const onEdit = (_id: string) => {
+    setEditModalOpen(true);
+    const updatingTeacher = teachers?.find((item) => item._id === _id);
+    if (!updatingTeacher) return message.warning("Bu ustoz ma'lumotlari topilmadi !");
+    editForm.setFieldsValue({ subject: updatingTeacher.subject });
+    setUpdTeacherValues({ _id, subject: updatingTeacher.subject, password: undefined });
   };
-  const showDeleteConfirm = (onConfirm: () => void) => {
+
+  const onDelete = (id: string) => {
     Modal.confirm({
       title: "O‘qituvchini o‘chirmoqchimisiz?",
       icon: <CircleAlert style={{ marginRight: "10px" }} />,
@@ -84,19 +100,15 @@ const Teachers = () => {
       okType: "danger",
       cancelText: "Bekor qilish",
       onOk() {
-        onConfirm();
+        deleteMutation.mutate(id);
       },
-    });
-  };
-  const onDelete = (id: string) => {
-    showDeleteConfirm(() => {
-      deleteMutation.mutate(id);
     });
   };
 
   const handleOpenModal = () => {
     setOpen(true);
   };
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -122,39 +134,48 @@ const Teachers = () => {
     }
   };
 
-  if (!teachers?.length) return;
-  if (isPending) return message.info("Loading....");
+  const handleUpdateTeacher = async () => {
+    try {
+      const result = getChangedFields(updTeacherValues, editForm.getFieldsValue());
+      if (!Object.keys(result).length) return message.warning("Ma'lumotlar o'zgartrilmadi");
+      if (!updTeacherValues?._id) return message.error("O‘qituvchi ID topilmadi");
+      if (!result.password) {
+        delete result.password;
+      }
+      updateMutation.mutate({ id: updTeacherValues._id, formData: result });
+    } catch (error) {
+      message.error("Iltimos, formani to‘g‘ri to‘ldiring");
+    }
+  };
+
+  if (isPending) {
+    return <Spin tip="Yuklanmoqda..." />;
+  }
+
   return (
     <div>
-      <Button
-        onClick={handleOpenModal}
-        icon={<Plus />}
-        style={{ marginBottom: "20px" }}
-      >
+      <Button onClick={handleOpenModal} icon={<Plus />} style={{ marginBottom: "20px" }}>
         Yangi ustoz qo'shish
       </Button>
-      <Modal
-        footer={false}
-        open={open}
-        title="Ustoz ma'lumotlarini kiriting."
-        onCancel={handleCancel}
-      >
+      <Modal footer={false} open={open} title="Ustoz ma'lumotlarini kiriting." onCancel={handleCancel}>
         <Form form={addForm} labelCol={{ span: 6 }} labelAlign="left">
           <Form.Item>
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
                 <Inbox />
               </p>
-              <p className="ant-upload-text">
-                Rasmni yuklash uchun bosing yoki surib keling.
-              </p>
-              <p className="ant-upload-hint">
-                Yagona yuklashni qo'llab-quvvatlash.
-              </p>
+              <p className="ant-upload-text">Rasmni yuklash uchun bosing yoki surib keling.</p>
+              <p className="ant-upload-hint">Yagona yuklashni qo'llab-quvvatlash.</p>
             </Dragger>
           </Form.Item>
-          <Form.Item name="subject" label="Mutaxasis">
-            <Input placeholder="Fan nomi" />
+          <Form.Item name="subject" label="Mutaxasis" initialValue={"Fan nomi..."}>
+            <Select>
+              {subjects.map((item) => (
+                <Select.Option key={item.key} value={item.name}>
+                  {item.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item name="firstname" label="Ustoz ismi">
             <Input placeholder="ism" />
@@ -170,25 +191,41 @@ const Teachers = () => {
           </Form.Item>
           <Flex gap={10} justify="end">
             <Button onClick={() => setOpen(false)}>Bekor qilish</Button>
-            <Button
-              loading={createMutation.isPending}
-              disabled={createMutation.isPending}
-              onClick={handleAdd}
-              type="primary"
-            >
+            <Button loading={createMutation.isPending} onClick={handleAdd} type="primary">
               Saqlash
             </Button>
           </Flex>
         </Form>
       </Modal>
+
+      <Modal footer={false} open={editModalOpen} title="Ustoz ma'lumotlarini o'zgartrish." onCancel={() => setEditModalOpen(false)}>
+        <Form onFinish={handleUpdateTeacher} form={editForm} labelCol={{ span: 5 }} labelAlign="left">
+          <Form.Item name="subject" label="Fan">
+            <Select>
+              {subjects.map((item) => {
+                return (
+                  <Select.Option key={item.key} value={item.name}>
+                    {item.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+          <Form.Item name="password" label="Yangi parol">
+            <Input.Password autoComplete="off" placeholder="yangi parol berish" />
+          </Form.Item>
+          <Form.Item>
+            <Flex justify="end">
+              <Button type="primary" htmlType="submit">
+                O'zgarishlarni saqlash
+              </Button>
+            </Flex>
+          </Form.Item>
+        </Form>
+      </Modal>
       <Row gutter={[16, 16]}>
         {teachers?.map((item) => (
-          <TeacherCard
-            key={item._id}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            teacher={item}
-          />
+          <TeacherCard key={item._id} onEdit={onEdit} onDelete={onDelete} teacher={item} />
         ))}
       </Row>
     </div>
