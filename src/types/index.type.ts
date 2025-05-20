@@ -50,6 +50,7 @@ export interface Category {
 }
 export interface Group {
   _id: string;
+  accessExam: boolean;
   name: string;
   teacherId: string;
   company: string;

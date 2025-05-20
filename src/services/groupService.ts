@@ -1,22 +1,22 @@
 import { Group, GroupFormData } from "../types/index.type";
-import api from "./api"
+import api from "./api";
 
-export const createGroup = async (formdata: GroupFormData):Promise<any> => {
+export const createGroup = async (formdata: GroupFormData): Promise<any> => {
   const res = await api.post(`/group`, formdata);
   return res.data;
-}
+};
 
-export const getAllGroup = async ():Promise<Group[]> => {
+export const getAllGroup = async (): Promise<Group[]> => {
   const res = await api.get(`/group`);
   return res.data.groups;
-}
+};
 
-export const getTeacherGroup = async (teacherId:string):Promise<Group[]> => {
+export const getTeacherGroup = async (teacherId: string): Promise<Group[]> => {
   const res = await api.get(`/group/teacher/${teacherId}`);
   return res.data;
-}
+};
 
-export const changeGroupAccess = async (groupId:string):Promise<any> => {
-  const res = await api.patch(`/group/access/${groupId}`);
-  return res.data;
-}
+export const updateGroup = async ({ id, data }: { id: string; data: Partial<Group> }): Promise<Group> => {
+  const response = await api.patch(`/group/${id}`, data);
+  return response.data;
+};
