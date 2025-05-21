@@ -3,13 +3,18 @@ import { ColumnsType } from "antd/es/table";
 import { Group, User } from "@/types/index.type";
 import { Link } from "react-router-dom";
 import { Search, Trash, UserRoundPen } from "lucide-react";
+import { UseMutateFunction } from "@tanstack/react-query";
+
+type DelGroupMutationType = UseMutateFunction<Group, Error, string, unknown>;
 
 type Props = {
   teacherList: User[] | undefined;
   handleAccessChange: (checked: boolean, id: string) => void;
+  handleOpen: (id:string) => void;
+  delGroupMutation: DelGroupMutationType
 };
 
-export const GroupsColumn = ({ teacherList, handleAccessChange }: Props): ColumnsType<Group> => {
+export const GroupsColumn = ({ teacherList, handleAccessChange, handleOpen, delGroupMutation }: Props): ColumnsType<Group> => {
   return [
     {
       title: "#",
@@ -50,8 +55,8 @@ export const GroupsColumn = ({ teacherList, handleAccessChange }: Props): Column
             <Link to={`/admin/groups/${record._id}`}>
               <Button size="small" type="link" style={{ color: "#4caf50" }} icon={<Search />} />
             </Link>
-            <Button size="small" type="link" style={{ color: "#5c6bc0" }} icon={<UserRoundPen />}></Button>
-            <Popconfirm title="Ishonchingiz komilmi ?" okText="ha" cancelText="bekor qil" okType="danger">
+            <Button onClick={() => handleOpen(record._id)} size="small" type="link" style={{ color: "#5c6bc0" }} icon={<UserRoundPen />}></Button>
+            <Popconfirm onConfirm={() => delGroupMutation(record._id)} title="Ishonchingiz komilmi ?" okText="ha" cancelText="bekor qil" okType="danger">
               <Button size="small" type="link" style={{ color: "#ff7043" }} icon={<Trash />}></Button>
             </Popconfirm>
           </div>

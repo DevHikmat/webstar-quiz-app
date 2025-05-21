@@ -10,6 +10,10 @@ export const getAllGroup = async (): Promise<Group[]> => {
   const res = await api.get(`/group`);
   return res.data.groups;
 };
+export const deleteGroup = async (groupId: string): Promise<Group> => {
+  const res = await api.delete(`/group/${groupId}`);
+  return res.data;
+};
 
 export const getTeacherGroup = async (teacherId: string): Promise<Group[]> => {
   const res = await api.get(`/group/teacher/${teacherId}`);

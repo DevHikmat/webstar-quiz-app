@@ -6,6 +6,7 @@ import StudentDetail from "@/pages/admin/studentDetail/StudentDetail";
 import Teachers from "@/pages/admin/teachers/Teachers";
 import Students from "@/pages/admin/students/Students";
 import Groups from "@/pages/admin/groups/Groups";
+import GroupDetail from "@/pages/admin/groupDetail/GroupDetail";
 
 export const adminRoutes: RouteObject = {
   path: '/admin',
@@ -15,6 +16,7 @@ export const adminRoutes: RouteObject = {
     { path: "students/:id", element: <StudentDetail /> },
     { path: 'teachers', element: <Teachers /> },
     { path: 'groups', element: <Groups /> },
+    { path: 'groups/:id', element: <GroupDetail /> },
     { path: 'exams', element: <Exams /> },
     { path: 'category', element: <Categories /> },
   ]
