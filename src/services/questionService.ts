@@ -1,4 +1,4 @@
-import { QuestionFormData } from "../types/index.type";
+import { QuestionFormData } from "../types/api.type";
 import api from "./api"
 
 

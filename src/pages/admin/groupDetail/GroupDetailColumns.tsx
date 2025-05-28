@@ -1,7 +1,7 @@
 import { Image } from "antd";
-import { User } from "@/types/index.type";
+import { User } from "@/types/api.type";
 import { UserRound } from "lucide-react";
-import {Group} from "@/types/index.type";
+import {Group} from "@/types/api.type";
 
 export const GroupDetailColumns = (
     groups: Group[] | undefined

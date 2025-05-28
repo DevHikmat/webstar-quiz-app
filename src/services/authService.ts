@@ -1,4 +1,4 @@
-import { LoginFormData, SignupFormData, User } from "../types/index.type";
+import { LoginFormData, SignupFormData, User } from "../types/api.type";
 import api from "./api";
 
 interface LoginResponse {
@@ -12,7 +12,7 @@ export const login = async (
   const res = await api.post(`/auth/login`, formdata);
   return res.data;
 };
-export const signup = async (formdata: FormData): Promise<any> => {
+export const signup = async (formdata: Partial<User>): Promise<any> => {
   const res = await api.post(`/auth/signup`, formdata, {
     headers: {
       "Content-Type": "multipart/form-data",

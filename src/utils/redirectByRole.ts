@@ -12,7 +12,7 @@ export const redirectByRole = (role: UserRole | string, navigate: NavigateFuncti
       navigate("/teacher");
       break;
     case "student":
-      navigate("/student");
+      navigate("/student/exam");
       break;
     default:
       navigate("/");

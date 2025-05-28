@@ -1,5 +1,5 @@
 import CommonTable from "@/components/CommonTable";
-import { User } from "@/types/index.type";
+import { User } from "@/types/api.type";
 import { Button, Divider, Flex, Form, Input, message, Modal, Select } from "antd";
 import { useState } from "react";
 import { deleteUser, getStudents, updateUser } from "@/services/userService";

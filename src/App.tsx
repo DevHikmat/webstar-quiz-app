@@ -1,28 +1,8 @@
-import { useEffect } from "react";
 import AppRoutes from "./router/AppRoutes";
-import { useLocation, useNavigate } from "react-router-dom";
-import { redirectByRole } from "./utils/redirectByRole";
-import { useQuery } from "@tanstack/react-query";
-import { getMe } from "./services/authService";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
-  const { pathname } = useLocation();
-  const { data, isLoading } = useQuery({
-    queryKey: ['me'],
-    queryFn: getMe,
-    enabled: !!localStorage.getItem('token'), 
-    retry: 1, 
-  });
-  const navigate = useNavigate();
-
-  const handleCheckOldAuth = async () => {
-    if (!data) return;
-    redirectByRole(data.role, navigate, pathname);
-  };
-
-  useEffect(() => {
-    handleCheckOldAuth();
-  }, [data]);
+  const { isLoading } = useAuth();
 
   if (isLoading) return <h1>Loading...</h1>;
 

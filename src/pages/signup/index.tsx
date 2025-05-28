@@ -5,6 +5,8 @@ import { UserRole } from "../../types/enum.type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { signup } from "@/services/authService";
 import { getAllGroup } from "@/services/groupService";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "@/store/userSlice";
 
 interface SignUpFormData {
   firstname: string;
@@ -16,7 +18,8 @@ interface SignUpFormData {
 
 const Signup = () => {
   const queryClient = useQueryClient();
-  const {mutate: signupUser} = useMutation({
+  const dispatch = useDispatch();
+  const {mutate: signupUser, isPending} = useMutation({
     mutationFn: signup,
     onSuccess: ({ user, token }) => {
       localStorage.setItem('token', token);
@@ -34,8 +37,9 @@ const Signup = () => {
   const handleSignup = async (values:SignUpFormData) => {
     const sendingData = {...values, role: UserRole.STUDENT };
     signupUser(sendingData, {
-      onSuccess: () => {
+      onSuccess: (user) => {
         navigate("/student")
+        dispatch(setCurrentUser(user));
       },
       onError: (err) => {
         console.log(err);
@@ -80,7 +84,7 @@ const Signup = () => {
                 })}
               </Select>
             </Form.Item>
-            <Button htmlType="submit" type="primary">
+            <Button loading={isPending} htmlType="submit" type="primary">
               Ro'yxatdan o'tish
             </Button>
           </Form>

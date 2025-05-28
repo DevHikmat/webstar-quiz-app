@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Avatar, Typography, Tag, Space, Divider } from "antd";
 import { UserOutlined, MailOutlined, CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { User } from "@/types/index.type";
+import { User } from "@/types/api.type";
 import { useGroupName } from "@/hooks/useGroupName";
 
 const { Title, Text } = Typography;

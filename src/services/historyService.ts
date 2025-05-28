@@ -1,4 +1,4 @@
-import { HistoryFormData } from "../types/index.type";
+import { HistoryFormData } from "../types/api.type";
 import api from "./api"
 
 

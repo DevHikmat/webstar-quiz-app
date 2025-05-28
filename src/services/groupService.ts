@@ -1,4 +1,4 @@
-import { Group, GroupFormData } from "../types/index.type";
+import { Group, GroupFormData } from "../types/api.type";
 import api from "./api";
 
 export const createGroup = async (formdata: GroupFormData): Promise<any> => {

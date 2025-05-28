@@ -1,4 +1,4 @@
-import { History } from "@/types/index.type";
+import { History } from "@/types/api.type";
 import { Button, Input, Popconfirm, Space, Tag } from "antd";
 import dayjs from "dayjs";
 import { Ban, CheckCheck, CircleHelp, Loader, PlusCircle, Trash } from "lucide-react";

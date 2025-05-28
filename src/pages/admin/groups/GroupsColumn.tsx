@@ -1,6 +1,6 @@
 import { Button, Popconfirm, Switch } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { Group, User } from "@/types/index.type";
+import { Group, User } from "@/types/api.type";
 import { Link } from "react-router-dom";
 import { Search, Trash, UserRoundPen } from "lucide-react";
 import { UseMutateFunction } from "@tanstack/react-query";

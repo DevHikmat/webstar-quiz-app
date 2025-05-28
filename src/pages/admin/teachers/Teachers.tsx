@@ -8,7 +8,7 @@ import { UserRole } from "@/types/enum.type";
 import { signup } from "@/services/authService";
 import { subjects } from "@/utils/subjects";
 import { getChangedFields } from "@/utils/getChangedFields";
-import { User } from "@/types/index.type";
+import { User } from "@/types/api.type";
 
 const { Dragger } = Upload;
 interface UpdateTeacherValue {

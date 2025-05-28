@@ -2,7 +2,7 @@ import CommonTable from "@/components/CommonTable";
 import ProfileCard from "@/components/ProfileCard";
 import { getOneUser } from "@/services/userService";
 import { UserRole } from "@/types/enum.type";
-import { History, User } from "@/types/index.type";
+import { History, User } from "@/types/api.type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";

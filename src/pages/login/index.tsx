@@ -1,13 +1,16 @@
 import { Button, Form, Input } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginFormData } from "../../types/index.type";
+import { LoginFormData } from "../../types/api.type";
 import "./login.scss";
 import { redirectByRole } from "../../utils/redirectByRole";
 import { login } from "@/services/authService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "@/store/userSlice";
 
 const Login = () => {
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { mutate: loginUser, isPending } = useMutation({
@@ -22,6 +25,7 @@ const Login = () => {
     loginUser(values, {
       onSuccess: ({ user }) => {
         redirectByRole(user.role, navigate);
+        dispatch(setCurrentUser(user))
       },
       onError: (error) => {
         console.log(error);

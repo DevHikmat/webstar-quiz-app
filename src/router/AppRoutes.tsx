@@ -1,11 +1,11 @@
 import { useRoutes } from "react-router-dom";
 import TeacherDashboard from "../pages/teacher";
-import StudentDashboard from "../pages/student";
 import ProtectedRoute from "./ProtectedRoute";
 import { UserRole } from "../types/enum.type";
 import Login from "../pages/login";
 import Signup from "../pages/signup";
 import { adminRoutes } from "./admin.routes";
+import { studentRoutes } from "./student.routes";
 
 const AppRoutes = () => {
   const routes = useRoutes([
@@ -34,10 +34,11 @@ const AppRoutes = () => {
       ),
     },
     {
+      ...studentRoutes,
       path: "/student",
       element: (
         <ProtectedRoute allowedRoles={[UserRole.STUDENT]}>
-          <StudentDashboard />
+          {studentRoutes.element}
         </ProtectedRoute>
       ),
     },
@@ -56,5 +57,5 @@ const AppRoutes = () => {
   ]);
 
   return routes;
-}
+};
 export default AppRoutes;

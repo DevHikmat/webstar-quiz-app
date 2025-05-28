@@ -1,4 +1,4 @@
-import { User } from "../types/index.type";
+import { User } from "../types/api.type";
 import api from "./api";
 
 export const getOneUser = async (userId: string): Promise<User> => {

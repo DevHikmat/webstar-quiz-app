@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Avatar, Button, Typography, Col } from "antd";
 import { Edit, Trash2 } from "lucide-react";
-import { User } from "@/types/index.type";
+import { User } from "@/types/api.type";
 
 const { Text, Title } = Typography;
 

@@ -1,4 +1,4 @@
-import { CategoryFormData } from "../types/index.type";
+import { CategoryFormData } from "../types/api.type";
 import api from "./api";
 
 export const createCategory = async (formdata: CategoryFormData): Promise<any> => {

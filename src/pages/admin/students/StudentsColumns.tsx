@@ -1,5 +1,5 @@
 import { Button, Image, message, Popconfirm, Switch } from "antd";
-import { Group, User } from "@/types/index.type";
+import { Group, User } from "@/types/api.type";
 import { Search, Trash, UserRound, UserRoundPen } from "lucide-react";
 import { QueryObserverResult, useMutation, UseMutationResult } from "@tanstack/react-query";
 import { updateUser } from "@/services/userService";
