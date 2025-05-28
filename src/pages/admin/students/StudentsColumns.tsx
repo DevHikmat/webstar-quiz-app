@@ -10,7 +10,7 @@ export const StudentsColumns = (
   deleteMutation: UseMutationResult<any, Error, string>,
   refetch: () => Promise<QueryObserverResult<{ users: User[]; totalPage: number }, Error>>,
   currentPage: number,
-  groups: Group[] | undefined
+  groups: Group[] | null
 ) => {
   const updateUserMutation = useMutation({
     mutationFn: (updatedData: { _id: string; accessExam: boolean }) => {

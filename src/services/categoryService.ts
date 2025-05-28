@@ -13,7 +13,7 @@ export const updateCategory = async (categoryId: string, formdata: Partial<Categ
 
 export const getAllCategory = async (): Promise<any> => {
   const res = await api.get(`/category`);
-  return res.data;
+  return res.data.categories;
 };
 
 export const deleteCategory = async (categoryId: string): Promise<any> => {

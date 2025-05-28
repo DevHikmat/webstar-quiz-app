@@ -2,7 +2,6 @@ import CommonTable from "@/components/CommonTable";
 import {
   createGroup,
   deleteGroup,
-  getAllGroup,
   updateGroup,
 } from "@/services/groupService";
 import { getTeachers } from "@/services/userService";
@@ -15,12 +14,13 @@ import {
   message,
   Modal,
   Select,
-  Spin,
   Switch,
 } from "antd";
 import { GroupsColumn } from "./GroupsColumn";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const Groups = () => {
   const queryClient = useQueryClient();
@@ -47,10 +47,7 @@ const Groups = () => {
       message.error("Guruhni o'chirishda xatolik yuz berdi");
     },
   });
-  const { data: groupsData, isPending } = useQuery({
-    queryKey: ["groups"],
-    queryFn: getAllGroup,
-  });
+  const { groups } = useSelector((state: RootState) => state.group);
   const { data: teacherList } = useQuery({
     queryKey: ["teachers"],
     queryFn: getTeachers,
@@ -67,7 +64,7 @@ const Groups = () => {
   });
   const handleOpen = (id: string) => {
     setOpen(id);
-    const editingGroup = groupsData?.find((gr) => gr._id === id);
+    const editingGroup = groups?.find((gr) => gr._id === id);
     if (editingGroup) {
       editForm.setFieldsValue({
         name: editingGroup.name,
@@ -113,12 +110,8 @@ const Groups = () => {
     delGroupMutation,
   });
 
-  if (isPending) {
-    return <Spin>Loading...</Spin>;
-  }
-  if (!groupsData) {
-    return;
-  }
+  if(!groups) return <h1>Guruhlar mavjud emas !</h1>
+ 
   return (
     <div>
       <Modal
@@ -200,7 +193,7 @@ const Groups = () => {
           <h3>Barcha guruhlar</h3>
         </Divider>
       </Form>
-      <CommonTable columns={columns} dataSource={groupsData} />
+      <CommonTable columns={columns} dataSource={groups} />
     </div>
   );
 };

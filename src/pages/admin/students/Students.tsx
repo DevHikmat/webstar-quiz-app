@@ -6,10 +6,11 @@ import { deleteUser, getStudents, updateUser } from "@/services/userService";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePagination } from "@/hooks/usePagination";
 import { StudentsColumns } from "./StudentsColumns";
-import { getAllGroup } from "@/services/groupService";
 import { getChangedFields } from "@/utils/getChangedFields";
 import { useUpdateMutation } from "@/hooks/useUpdateMutation";
 import { ColumnsType } from "antd/es/table";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const Students = () => {
   const { page: currentPage } = usePagination();
@@ -17,10 +18,7 @@ const Students = () => {
     queryKey: ["students", currentPage],
     queryFn: () => getStudents(currentPage),
   });
-  const { data: groupList } = useQuery({
-    queryKey: ["groups"],
-    queryFn: () => getAllGroup(),
-  });
+  const { groups } = useSelector((state: RootState) => state.group);
   const [open, setOpen] = useState(false);
   const [updForm] = Form.useForm();
   const [updatingUser, setUpdatingUser] = useState<User | null>(null);
@@ -63,7 +61,7 @@ const Students = () => {
     updForm.resetFields();
   };
 
-  const columns:ColumnsType<User> = StudentsColumns(handleOpenModal, deleteMutation, refetch, currentPage, groupList);
+  const columns:ColumnsType<User> = StudentsColumns(handleOpenModal, deleteMutation, refetch, currentPage, groups);
 
   return (
     <div>
@@ -75,7 +73,7 @@ const Students = () => {
           </Form.Item>
           <Form.Item label="Boshqa guruhga o'tkazish" name='group'>
             <Select>
-              {groupList?.map((item) => {
+              {groups?.map((item) => {
                 return (
                   <Select.Option value={item._id} key={item._id}>
                     {item.name}

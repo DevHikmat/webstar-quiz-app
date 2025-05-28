@@ -2,11 +2,11 @@ import { Button, Form, Input, Select } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import "./signup.scss";
 import { UserRole } from "../../types/enum.type";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signup } from "@/services/authService";
-import { getAllGroup } from "@/services/groupService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "@/store/userSlice";
+import { RootState } from "@/store/store";
 
 interface SignUpFormData {
   firstname: string;
@@ -26,10 +26,7 @@ const Signup = () => {
       queryClient.setQueryData(['me'], user); 
     },
   });
-  const { data:groupList, isLoading, isError, error } = useQuery({
-    queryKey: ['groups'],
-    queryFn: () => getAllGroup(),
-  })
+  const {groups} = useSelector((state: RootState) => state.group);
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -46,9 +43,6 @@ const Signup = () => {
       },
     })
   };
-
-  if (isLoading) return <div>Yuklanmoqda...</div>;
-  if (isError) return <div>Xatolik: {(error as Error).message}</div>;
 
   return (
     <div className="signup">
@@ -75,7 +69,7 @@ const Signup = () => {
             </Form.Item>
             <Form.Item name="group" initialValue={""}>
               <Select>
-                {groupList?.map((item) => {
+                {groups?.map((item) => {
                   return (
                     <Select.Option value={item._id} key={Math.random()}>
                       {item.name}

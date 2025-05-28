@@ -43,7 +43,10 @@ export interface HistoryFormData {
 export interface Category {
   _id: string;
   name: string;
-  image: string;
+  image: {
+    url: string,
+    public_id: string;
+  }
   type: string;
   createdAt: string;
   updatedAt: string;
@@ -82,6 +85,16 @@ export interface User {
   subject: string;
   createdAt: string;
   updatedAt: string;
+}
+export interface QuizType {
+  _id: string;
+  categoryId: string;
+  countQuiz: number;
+  createdAt: string;
+  quizTime: number;
+  title: string;
+  updatedAt: string;
+  __v: number;
 }
 export interface Question {
   questionImage: null | string;
